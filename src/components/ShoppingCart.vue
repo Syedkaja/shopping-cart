@@ -2,7 +2,12 @@
   <div>
     <h1>Shopping Cart</h1>
     <ul v-for="product in products">
-      <li>{{product.title}} - {{product.price | currency}} - {{product.quantity}}</li>
+      <li>
+        {{product.title}} - {{product.price | currency}} - {{product.quantity}}
+        <button
+          @click="removeProductFromCart(product)"
+        >Remove</button>
+      </li>
     </ul>
     <p>Total : {{total | currency}}</p>
     <button @click="checkout">Checkout</button>
@@ -30,7 +35,7 @@ export default {
     // }
   },
   methods: {
-    ...mapActions(["checkout"])
+    ...mapActions(["checkout", "removeProductFromCart"])
   }
 };
 </script>

@@ -20,6 +20,7 @@ export default new Vuex.Store({
       return state.cart.map(cartItem => {
         const product = state.products.find(product => product.id === cartItem.id)
         return {
+          id: product.id,
           title: product.title,
           price: product.price,
           quantity: cartItem.quantity
@@ -79,6 +80,22 @@ export default new Vuex.Store({
 
     },
 
+    removeProductFromCart({
+      state,
+      getters,
+      commit
+    }, product) {
+      const cartItem = state.cart.find(item => item.id === product.id)
+      const cartProduct = state.products.find(item => item.id === cartItem.id)
+      if (cartItem.quantity > 1) {
+        commit('decrementItemQuantity', cartItem)
+      } else {
+        commit('removeCartItem', cartItem)
+      }
+      commit('incrementProductInventory', cartProduct);
+
+    },
+
     checkout({
       state,
       commit
@@ -118,6 +135,15 @@ export default new Vuex.Store({
     },
     emptyCart(state) {
       state.cart = [];
+    },
+    removeCartItem(state, cartItem) {
+      state.cart.splice(cartItem)
+    },
+    decrementItemQuantity(state, cartItem) {
+      cartItem.quantity--;
+    },
+    incrementProductInventory(state, cartProduct) {
+      cartProduct.inventory++;
     }
   }
 
