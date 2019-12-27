@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1>Shopping Cart</h1>
+    <h1>Cart</h1>
     <ul v-for="product in products">
       <li>
         {{product.title}} - {{product.price | currency}} - {{product.quantity}}

@@ -8,6 +8,7 @@ export default new Vuex.Store({
   state: {
     products: [],
     //holds {id, quantity}
+    filteredProducts: [],
     cart: [],
     setCheckoutStatus: null
   },
@@ -15,6 +16,10 @@ export default new Vuex.Store({
   getters: { // = computed properties
     availableProducts(state, getters) {
       return state.products.filter(product => product.inventory > 0)
+    },
+
+    fetchFilteredProducts(state) {
+      return state.filteredProducts;
     },
     cartProducts(state) {
       return state.cart.map(cartItem => {
@@ -59,6 +64,31 @@ export default new Vuex.Store({
           resolve()
         });
       })
+    },
+
+    fetchProductsCategory({state, commit}) {
+      let dropdownFilterArray = [];          
+      if(event.target.value === "All") {
+        dropdownFilterArray = state.products;
+        commit('dropdownFilter', dropdownFilterArray);
+      } else {
+        dropdownFilterArray = state.products.filter(product => product.category === event.target.value)
+        commit('dropdownFilter', dropdownFilterArray);
+      }         
+    },
+
+    filterKeyInProducts({state, commit, getters}) {
+      const key = event.target.value;
+      key.toLowerCase().trim();
+      let searchFilterArray = [];      
+      if(!key.length) {
+        searchFilterArray = state.products;
+        commit('searchProducts', searchFilterArray);
+      } else {
+        searchFilterArray = state.filteredProducts.filter(item => item.title.toLowerCase().indexOf(key) > -1);
+        commit('searchProducts', searchFilterArray);
+      }
+        
     },
 
     addProductToCart({
@@ -117,6 +147,7 @@ export default new Vuex.Store({
     //updateProducts //update state functions here
     setProducts(state, products) {
       state.products = products;
+      state.filteredProducts = products;
     },
     pushProductTocart(state, productId) {
       state.cart.push({
@@ -144,6 +175,12 @@ export default new Vuex.Store({
     },
     incrementProductInventory(state, cartProduct) {
       cartProduct.inventory++;
+    },
+    searchProducts(state, searchFilterArray){
+        state.filteredProducts = searchFilterArray
+    },
+    dropdownFilter(state, dropdownFilterArray) {
+        state.filteredProducts = dropdownFilterArray;
     }
   }
 
